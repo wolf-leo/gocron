@@ -1,8 +1,8 @@
 # gocron - 定时任务管理系统
 
-[![Downloads](https://img.shields.io/github/downloads/ouqiang/gocron/total.svg)](https://github.com/ouqiang/gocron/releases)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/ouqiang/gocron/blob/master/LICENSE)
-[![Release](https://img.shields.io/github/release/ouqiang/gocron.svg?label=Release)](https://github.com/ouqiang/gocron/releases)
+> 此仓库为 fork 原始仓库后升级改良版
+>
+> 原始地址 [https://github.com/ouqiang/gocron](https://github.com/ouqiang/gocron)
 
 # 项目简介
 
@@ -28,9 +28,9 @@
 
 ### 截图
 
-![流程图](https://raw.githubusercontent.com/ouqiang/gocron/master/assets/screenshot/scheduler.png)
-![任务](https://raw.githubusercontent.com/ouqiang/gocron/master/assets/screenshot/task.png)
-![Slack](https://raw.githubusercontent.com/ouqiang/gocron/master/assets/screenshot/notification.png)
+![流程图](/assets/screenshot/scheduler.png)
+![任务](/assets/screenshot/task.png)
+![Slack](/assets/screenshot/notification.png)
 
 ### 支持平台
 
@@ -51,19 +51,14 @@
 1. 目录 cmd 下
 2. 启动
 
-* 调度器启动
+* 调度器启动:
     * cd cmd/gocron
     * Windows、Linux、Mac OS:  `go run ./gocron.go web`
+    * 浏览器访问 http://localhost:5920
+
 * 任务节点启动, 默认监听0.0.0.0:5921
     * cd cmd/node
     * Windows、Linux、Mac OS:  `go run ./node.go`
-
-3. 浏览器访问 http://localhost:5920
-
-### 源码安装
-
-- Go 1.11+
-
 
 ### 开发
 
