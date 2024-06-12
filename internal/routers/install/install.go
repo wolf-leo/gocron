@@ -107,7 +107,7 @@ func writeConfig(form InstallForm) error {
 		"db.password", form.DbPassword,
 		"db.database", form.DbName,
 		"db.prefix", form.DbTablePrefix,
-		"db.charset", "utf8",
+		"db.charset", "utf8mb4",
 		"db.max.idle.conns", "5",
 		"db.max.open.conns", "100",
 		"allow_ips", "",

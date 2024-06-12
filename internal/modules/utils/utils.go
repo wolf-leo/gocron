@@ -7,10 +7,11 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
-	"github.com/Tang-RoseChild/mahonia"
+	"github.com/axgle/mahonia"
 )
 
 func RandAuthToken() string {
@@ -55,8 +56,7 @@ func RandNumber(max int) int {
 // GBK编码转换为UTF8
 func GBK2UTF8(s string) (string, bool) {
 	dec := mahonia.NewDecoder("gbk")
-
-	return dec.ConvertStringOK(s)
+	return dec.ConvertString(s), true
 }
 
 // 批量替换字符串
@@ -105,4 +105,16 @@ func FileExist(file string) bool {
 	}
 
 	return true
+}
+
+func GetCurrentProjectPath() (string, error) {
+	wd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	absPath, err := filepath.Abs(wd)
+	if err != nil {
+		return "", err
+	}
+	return absPath, nil
 }

@@ -1,14 +1,11 @@
 package notify
 
 import (
-	"strconv"
-	"strings"
-	"time"
-
-	"github.com/go-gomail/gomail"
 	"github.com/ouqiang/gocron/internal/models"
 	"github.com/ouqiang/gocron/internal/modules/logger"
 	"github.com/ouqiang/gocron/internal/modules/utils"
+	"strconv"
+	"strings"
 )
 
 // @author qiang.ou<qingqianludao@gmail.com>
@@ -49,26 +46,7 @@ func (mail *Mail) Send(msg Message) {
 func (mail *Mail) send(mailSetting models.Mail, toUsers []string, msg Message) {
 	body := msg["content"].(string)
 	body = strings.Replace(body, "\n", "<br>", -1)
-	gomailMessage := gomail.NewMessage()
-	gomailMessage.SetHeader("From", mailSetting.User)
-	gomailMessage.SetHeader("To", toUsers...)
-	gomailMessage.SetHeader("Subject", "gocron-定时任务通知")
-	gomailMessage.SetBody("text/html", body)
-	mailer := gomail.NewDialer(mailSetting.Host, mailSetting.Port,
-		mailSetting.User, mailSetting.Password)
-	maxTimes := 3
-	i := 0
-	for i < maxTimes {
-		err := mailer.DialAndSend(gomailMessage)
-		if err == nil {
-			break
-		}
-		i += 1
-		time.Sleep(2 * time.Second)
-		if i < maxTimes {
-			logger.Errorf("mail#发送消息失败#%s#消息内容-%s", err.Error(), msg["content"])
-		}
-	}
+
 }
 
 func (mail *Mail) getActiveMailUsers(mailSetting models.Mail, msg Message) []string {

@@ -12,7 +12,6 @@ import (
 	"github.com/ouqiang/gocron/internal/modules/logger"
 	"github.com/ouqiang/gocron/internal/modules/setting"
 	"github.com/ouqiang/gocron/internal/modules/utils"
-	"github.com/ouqiang/goutil"
 )
 
 var (
@@ -38,7 +37,8 @@ var (
 func InitEnv(versionString string) {
 	logger.InitLogger()
 	var err error
-	AppDir, err = goutil.WorkDir()
+	// AppDir, err = goutil.WorkDir()
+	AppDir, err = utils.GetCurrentProjectPath()
 	if err != nil {
 		logger.Fatal(err)
 	}

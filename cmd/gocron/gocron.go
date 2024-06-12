@@ -21,11 +21,12 @@ import (
 )
 
 var (
-	AppVersion           = "1.5"
-	BuildDate, GitCommit string
+	AppVersion = "2.0"
+	GitCommit  string
+	BuildDate  string
 )
 
-// web服务器默认端口
+// DefaultPort web服务器默认端口
 const DefaultPort = 5920
 
 func main() {
@@ -65,7 +66,6 @@ func getCommands() []cli.Command {
 			},
 		},
 	}
-
 	return []cli.Command{command}
 }
 

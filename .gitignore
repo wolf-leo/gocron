@@ -36,5 +36,6 @@ profile/*
 /web/public/index.html
 /gocron-package
 /gocron-node-package
+/go.sum
 
 node_modules

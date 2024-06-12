@@ -55,42 +55,42 @@ const (
 	WebhookUrlKey      = "url"
 )
 
-// 初始化基本字段 邮件、slack等
+// InitBasicField 初始化基本字段 邮件、slack等
 func (setting *Setting) InitBasicField() {
 	setting.Code = SlackCode
 	setting.Key = SlackUrlKey
 	setting.Value = ""
-	Db.Insert(setting)
+	_, _ = Db.Insert(setting)
 	setting.Id = 0
 
 	setting.Code = SlackCode
 	setting.Key = SlackTemplateKey
 	setting.Value = slackTemplate
-	Db.Insert(setting)
+	_, _ = Db.Insert(setting)
 	setting.Id = 0
 
 	setting.Code = MailCode
 	setting.Key = MailServerKey
 	setting.Value = ""
-	Db.Insert(setting)
+	_, _ = Db.Insert(setting)
 	setting.Id = 0
 
 	setting.Code = MailCode
 	setting.Key = MailTemplateKey
 	setting.Value = emailTemplate
-	Db.Insert(setting)
+	_, _ = Db.Insert(setting)
 	setting.Id = 0
 
 	setting.Code = WebhookCode
 	setting.Key = WebhookTemplateKey
 	setting.Value = webhookTemplate
-	Db.Insert(setting)
+	_, _ = Db.Insert(setting)
 	setting.Id = 0
 
 	setting.Code = WebhookCode
 	setting.Key = WebhookUrlKey
 	setting.Value = ""
-	Db.Insert(setting)
+	_, _ = Db.Insert(setting)
 }
 
 // region slack配置
@@ -145,7 +145,7 @@ func (setting *Setting) UpdateSlack(url, template string) error {
 	return nil
 }
 
-// 创建slack渠道
+// CreateChannel 创建slack渠道
 func (setting *Setting) CreateChannel(channel string) (int64, error) {
 	setting.Code = SlackCode
 	setting.Key = SlackChannelKey
@@ -164,7 +164,7 @@ func (setting *Setting) IsChannelExist(channel string) bool {
 	return count > 0
 }
 
-// 删除slack渠道
+// RemoveChannel 删除slack渠道
 func (setting *Setting) RemoveChannel(id int) (int64, error) {
 	setting.Code = SlackCode
 	setting.Key = SlackChannelKey
@@ -189,7 +189,7 @@ type MailUser struct {
 	Email    string `json:"email"`
 }
 
-// region 邮件配置
+// Mail region 邮件配置
 func (setting *Setting) Mail() (Mail, error) {
 	list := make([]Setting, 0)
 	err := Db.Where("code = ?", MailCode).Find(&list)
@@ -208,9 +208,9 @@ func (setting *Setting) formatMail(list []Setting, mail *Mail) {
 	for _, v := range list {
 		switch v.Key {
 		case MailServerKey:
-			json.Unmarshal([]byte(v.Value), mail)
+			_ = json.Unmarshal([]byte(v.Value), mail)
 		case MailUserKey:
-			json.Unmarshal([]byte(v.Value), &mailUser)
+			_ = json.Unmarshal([]byte(v.Value), &mailUser)
 			mailUser.Id = v.Id
 			mail.MailUsers = append(mail.MailUsers, mailUser)
 		case MailTemplateKey:
@@ -222,10 +222,10 @@ func (setting *Setting) formatMail(list []Setting, mail *Mail) {
 
 func (setting *Setting) UpdateMail(config, template string) error {
 	setting.Value = config
-	Db.Cols("value").Update(setting, Setting{Code: MailCode, Key: MailServerKey})
+	_, _ = Db.Cols("value").Update(setting, Setting{Code: MailCode, Key: MailServerKey})
 
 	setting.Value = template
-	Db.Cols("value").Update(setting, Setting{Code: MailCode, Key: MailTemplateKey})
+	_, _ = Db.Cols("value").Update(setting, Setting{Code: MailCode, Key: MailTemplateKey})
 
 	return nil
 }
@@ -283,10 +283,10 @@ func (setting *Setting) formatWebhook(list []Setting, webHook *WebHook) {
 func (setting *Setting) UpdateWebHook(url, template string) error {
 	setting.Value = url
 
-	Db.Cols("value").Update(setting, Setting{Code: WebhookCode, Key: WebhookUrlKey})
+	_, _ = Db.Cols("value").Update(setting, Setting{Code: WebhookCode, Key: WebhookUrlKey})
 
 	setting.Value = template
-	Db.Cols("value").Update(setting, Setting{Code: WebhookCode, Key: WebhookTemplateKey})
+	_, _ = Db.Cols("value").Update(setting, Setting{Code: WebhookCode, Key: WebhookTemplateKey})
 
 	return nil
 }

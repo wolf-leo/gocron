@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -285,11 +286,12 @@ func createTaskLog(taskModel models.Task, status models.Status) (int64, error) {
 	taskLogModel.Command = taskModel.Command
 	taskLogModel.Timeout = taskModel.Timeout
 	if taskModel.Protocol == models.TaskRPC {
-		aggregationHost := ""
+		var aggregationHost []string
 		for _, host := range taskModel.Hosts {
-			aggregationHost += fmt.Sprintf("%s - %s<br>", host.Alias, host.Name)
+			aggregationHost = append(aggregationHost, fmt.Sprintf("%s-%s", host.Alias, host.Name))
 		}
-		taskLogModel.Hostname = aggregationHost
+		logJson, _ := json.Marshal(aggregationHost)
+		taskLogModel.Hostname = string(logJson)
 	}
 	taskLogModel.StartTime = time.Now()
 	taskLogModel.Status = status
@@ -456,7 +458,7 @@ func SendNotification(taskModel models.Task, taskResult TaskResult) {
 		"output":           taskResult.Result,
 		"status":           statusName,
 		"task_id":          taskModel.Id,
-		"remark":  			taskModel.Remark,
+		"remark":           taskModel.Remark,
 	}
 	notify.Push(msg)
 }

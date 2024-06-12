@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/go-xorm/xorm"
 	"github.com/ouqiang/gocron/internal/modules/logger"
+	"xorm.io/xorm"
 )
 
 type Migration struct{}
 
-// 首次安装, 创建数据库表
+// Install 首次安装, 创建数据库表
 func (migration *Migration) Install(dbName string) error {
 	setting := new(Setting)
 	task := new(Task)
