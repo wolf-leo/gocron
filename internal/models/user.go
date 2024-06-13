@@ -77,7 +77,7 @@ func (user *User) Match(username, password string) bool {
 
 // 获取用户详情
 func (user *User) Find(id int) error {
-	_, err := Db.Where("id != ?", id).Get(user)
+	_, err := Db.Where("id = ?", id).Get(user)
 
 	return err
 }
