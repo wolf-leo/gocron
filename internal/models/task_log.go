@@ -69,7 +69,7 @@ func taskLogTableName() []string {
 // Clear 清空表
 func (taskLog *TaskLog) Clear() (int64, error) {
 	// return Db.Truncate(taskLog)
-	tableName := TablePrefix + taskLogTableName()[0]
+	tableName := taskLogTableName()[0]
 	sql := fmt.Sprintf("TRUNCATE TABLE %s", tableName)
 	_, err := Db.Exec(sql)
 	if err != nil {
