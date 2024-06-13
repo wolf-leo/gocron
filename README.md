@@ -42,7 +42,7 @@
 
 ## 下载
 
-- [github releases](https://gitee.com/wolf18/gocron/releases)
+- [github releases](https://github.com/wolf-leo/gocron/releases)
 - [gitee releases](https://gitee.com/wolf18/gocron/releases)
 
 ## 安装
