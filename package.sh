@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
  
 # 生成压缩包 xx.tar.gz或xx.zip
-# 使用 ./package.sh -a amd664 -p linux -v v2.0.0
+# 使用 ./package.sh -a amd664 -p linux -v v2.0.x
  
 # 任何命令返回非0值退出
 set -o errexit
