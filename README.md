@@ -42,23 +42,28 @@
 
 ## 下载
 
-请下载源码后自行go build
+- [github releases](https://gitee.com/wolf18/gocron/releases)
+- [gitee releases](https://gitee.com/wolf18/gocron/releases)
 
 ## 安装
 
 ### 二进制安装
 
-1. 目录 cmd 下
-2. 启动
+1. 下载对应平台的压缩包后解压
+2. `cd 解压目录 , tar -zxvf 解压`
+3. 启动
+    - 调度器启动(默认监听`5920`端口)
+    - Windows: `gocron.exe web`
+    - Linux、Mac OS:  `./gocron web`
+    - 任务节点启动(默认监听`5921`)
+    - Windows:  `gocron-node.exe`
+    - Linux、Mac OS:  `./gocron-node`
+4. 浏览器访问 http://localhost:5920
 
-* 调度器启动:
-    * cd cmd/gocron
-    * Windows、Linux、Mac OS:  `go run ./gocron.go web`
-    * 浏览器访问 http://localhost:5920
+### 安装教程
 
-* 任务节点启动, 默认监听0.0.0.0:5921
-    * cd cmd/node
-    * Windows、Linux、Mac OS:  `go run ./node.go`
+- [调度系统安装](https://www.wolfcode.net/info/228/)
+- [受控节点安装](https://www.wolfcode.net/info/230/)
 
 ### 开发
 
@@ -87,15 +92,6 @@
     * -key-file 私钥文件
     * -h 查看帮助
     * -v 查看版本
-
-## To Do List
-
-- [x] 版本升级
-- [x] 批量开启、关闭、删除任务
-- [x] 调度器与任务节点通信支持https
-- [x] 任务分组
-- [x] 多用户
-- [x] 权限控制
 
 ## 程序使用的组件
 
