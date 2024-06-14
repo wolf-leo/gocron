@@ -1,6 +1,5 @@
 // Command gocron
 //go:generate statik -src=../../web/public -dest=../../internal -f
-//go:generate statik -src=../../web/vue/dist -dest=../../internal -f
 
 package main
 
