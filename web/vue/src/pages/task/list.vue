@@ -113,23 +113,26 @@
       </el-table-column>
       <el-table-column
         prop="id"
+        width="100"
+        align="center"
         label="任务ID">
       </el-table-column>
       <el-table-column
         prop="name"
         label="任务名称"
-      width="150">
+      width="150"
+        align="center">
       </el-table-column>
       <el-table-column
         prop="tag"
-        label="标签">
+        label="标签" align="center">
       </el-table-column>
       <el-table-column
         prop="spec"
         label="cron表达式"
-      width="120">
+        align="center">
       </el-table-column>
-      <el-table-column label="下次执行时间" width="160">
+      <el-table-column label="下次执行时间" width="160" align="center">
         <template slot-scope="scope">
           {{scope.row.next_run_time | formatTime}}
         </template>
@@ -137,9 +140,10 @@
       <el-table-column
         prop="protocol"
         :formatter="formatProtocol"
-        label="执行方式">
+        width="120"
+        label="执行方式" align="center">
       </el-table-column>
-      <el-table-column
+      <el-table-column width="120" align="center"
         label="状态" v-if="this.isAdmin">
           <template slot-scope="scope">
             <el-switch
@@ -153,7 +157,7 @@
             </el-switch>
           </template>
       </el-table-column>
-      <el-table-column label="状态" v-else>
+      <el-table-column label="状态" width="120" align="center" v-else>
         <template slot-scope="scope">
           <el-switch
             v-if="scope.row.level === 1"

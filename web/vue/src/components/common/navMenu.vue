@@ -31,16 +31,20 @@
     </el-menu>
   </div>
 </template>
-
+<style>
+aside .el-menu-item {
+  padding: 0 !important;
+}
+</style>
 <script>
 
 export default {
   name: 'app-nav-menu',
-  data() {
+  data () {
     return {}
   },
   computed: {
-    currentRoute() {
+    currentRoute () {
       if (this.$route.path === '/') {
         return '/task'
       }
@@ -49,7 +53,7 @@ export default {
     }
   },
   methods: {
-    logout() {
+    logout () {
       this.$store.commit('logout')
       this.$router.push('/')
     }

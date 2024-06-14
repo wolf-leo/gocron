@@ -8,9 +8,9 @@
         <router-view/>
       </div>
     </el-main>
-    <!--    <el-footer>-->
-    <!--      <app-footer></app-footer>-->
-    <!--    </el-footer>-->
+    <el-footer>
+      <app-footer></app-footer>
+    </el-footer>
   </el-container>
 </template>
 
@@ -22,10 +22,10 @@ import appFooter from './components/common/footer.vue'
 
 export default {
   name: 'App',
-  data() {
+  data () {
     return {}
   },
-  created() {
+  created () {
     installService.status((data) => {
       if (!data) {
         this.$router.push('/install')
@@ -57,7 +57,7 @@ body {
   padding: 0;
   margin: 0;
   width: 100%;
-  height: 98vh;
+  height: 100vh;
 }
 
 .el-main {
@@ -66,8 +66,11 @@ body {
 }
 
 #main-container .el-main {
-  height: calc(100vh - 120px);
-  padding: 10px 20px;
+  height: 100vh;
+  padding: 20px;
+  position: relative;
+  width: 100%;
+  overflow: auto;
 }
 
 header {
@@ -76,16 +79,19 @@ header {
 
 footer {
   height: auto !important;
-  display: none;
+  background: #545c64;
 }
 
 .el-aside {
-  width: 150px !important;
-  overflow: hidden;
+  width: 120px !important;
+  height: 100%;
+  display: block;
+  z-index: 99999;
 }
 
 .el-aside .el-menu {
   height: 100%;
+  text-align: center;
 }
 
 .el-table__empty-block {
@@ -112,5 +118,8 @@ footer {
 
 .el-table td.el-table__cell div {
   padding: 0 7px;
+}
+.el-pagination{
+  padding: 10px 0;
 }
 </style>

@@ -68,32 +68,38 @@
         </el-table-column>
         <el-table-column
           prop="id"
-          label="ID">
+          label="ID"
+          width="100"
+          align="center"
+        >
         </el-table-column>
         <el-table-column
           prop="task_id"
-          label="任务ID">
+          label="任务ID"
+          width="100"
+          align="center">
         </el-table-column>
         <el-table-column
           prop="name"
           label="任务名称"
-        width="180">
+        width="220"
+          align="center">
         </el-table-column>
         <el-table-column
           prop="protocol"
           label="执行方式"
+          align="center"
+          width="200"
           :formatter="formatProtocol">
         </el-table-column>
         <el-table-column
-          label="任务节点"
-          width="150">
+          label="任务节点">
           <template slot-scope="scope">
             <div v-html="scope.row.hostname">{{scope.row.hostname}}</div>
           </template>
         </el-table-column>
         <el-table-column
-          label="执行时长"
-          width="250">
+          label="执行时长">
           <template slot-scope="scope">
             执行时长: {{scope.row.total_time > 0 ? scope.row.total_time : 1}}秒<br>
             开始时间: {{scope.row.start_time | formatTime}}<br>
@@ -101,7 +107,9 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="状态">
+          label="状态"
+        width="130"
+        align="center">
           <template slot-scope="scope">
             <span style="color:red" v-if="scope.row.status === 0">失败</span>
             <span style="color:green" v-else-if="scope.row.status === 1">执行中</span>
@@ -111,7 +119,8 @@
         </el-table-column>
         <el-table-column
           label="执行结果"
-          width="120" v-if="this.isAdmin">
+          width="120"
+          align="center" v-if="this.isAdmin">
           <template slot-scope="scope">
             <el-button type="success"
                        v-if="scope.row.status === 2"

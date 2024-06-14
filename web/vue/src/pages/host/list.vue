@@ -39,30 +39,30 @@
         style="width: 100%">
         <el-table-column
           prop="id"
-          label="节点ID">
+          label="节点ID" width="150" align="center">
         </el-table-column>
         <el-table-column
           prop="alias"
-          label="节点名称">
+          label="节点名称" width="230" align="center">
         </el-table-column>
         <el-table-column
           prop="name"
-          label="主机名">
+          label="主机名" align="center">
         </el-table-column>
         <el-table-column
           prop="port"
-          label="端口">
+          label="端口" width="150" align="center">
         </el-table-column>
-        <el-table-column label="查看任务">
+        <el-table-column label="查看任务" width="150" align="center">
           <template slot-scope="scope">
             <el-button type="success" @click="toTasks(scope.row)">查看任务</el-button>
           </template>
         </el-table-column>
         <el-table-column
           prop="remark"
-          label="备注">
+          label="备注" align="center">
         </el-table-column>
-        <el-table-column label="操作" width="300" v-if="this.isAdmin">
+        <el-table-column label="操作" align="center" width="300" v-if="this.isAdmin">
           <template slot-scope="scope">
             <el-row>
               <el-button type="primary" @click="toEdit(scope.row)">编辑</el-button>
