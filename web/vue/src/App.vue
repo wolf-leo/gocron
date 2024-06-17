@@ -63,14 +63,16 @@ body {
 .el-main {
   padding: 0;
   margin: 0;
+  overflow: hidden;
+  top: 0;
 }
 
 #main-container .el-main {
-  height: 100vh;
   padding: 20px;
   position: relative;
   width: 100%;
   overflow: auto;
+  margin-bottom: 70px;
 }
 
 header {
