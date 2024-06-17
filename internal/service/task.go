@@ -155,7 +155,7 @@ func (task Task) Add(taskModel models.Task) {
 		logger.Errorf("添加任务失败#不允许添加子任务到调度器#任务Id-%d", taskModel.Id)
 		return
 	}
-	taskFunc := createJob(taskModel)
+	taskFunc := createJob(taskModel, 9999)
 	if taskFunc == nil {
 		logger.Error("创建任务处理Job失败,不支持的任务协议#", taskModel.Protocol)
 		return
@@ -202,8 +202,8 @@ func (task Task) WaitAndExit() {
 }
 
 // 直接运行任务
-func (task Task) Run(taskModel models.Task) {
-	go createJob(taskModel)()
+func (task Task) Run(taskModel models.Task, uid int) {
+	go createJob(taskModel, uid)()
 }
 
 type Handler interface {
@@ -277,7 +277,7 @@ func (h *RPCHandler) Run(taskModel models.Task, taskUniqueId int64) (result stri
 }
 
 // 创建任务日志
-func createTaskLog(taskModel models.Task, status models.Status) (int64, error) {
+func createTaskLog(taskModel models.Task, status models.Status, uid int) (int64, error) {
 	taskLogModel := new(models.TaskLog)
 	taskLogModel.TaskId = taskModel.Id
 	taskLogModel.Name = taskModel.Name
@@ -295,6 +295,7 @@ func createTaskLog(taskModel models.Task, status models.Status) (int64, error) {
 	}
 	taskLogModel.StartTime = time.Now()
 	taskLogModel.Status = status
+	taskLogModel.AdminId = uid
 	insertId, err := taskLogModel.Create()
 
 	return insertId, err
@@ -318,7 +319,7 @@ func updateTaskLog(taskLogId int64, taskResult TaskResult) (int64, error) {
 
 }
 
-func createJob(taskModel models.Task) cron.FuncJob {
+func createJob(taskModel models.Task, uid int) cron.FuncJob {
 	handler := createHandler(taskModel)
 	if handler == nil {
 		return nil
@@ -327,7 +328,7 @@ func createJob(taskModel models.Task) cron.FuncJob {
 		taskCount.Add()
 		defer taskCount.Done()
 
-		taskLogId := beforeExecJob(taskModel)
+		taskLogId := beforeExecJob(taskModel, uid)
 		if taskLogId <= 0 {
 			return
 		}
@@ -362,12 +363,12 @@ func createHandler(taskModel models.Task) Handler {
 }
 
 // 任务前置操作
-func beforeExecJob(taskModel models.Task) (taskLogId int64) {
+func beforeExecJob(taskModel models.Task, uid int) (taskLogId int64) {
 	if taskModel.Multi == 0 && runInstance.has(taskModel.Id) {
-		createTaskLog(taskModel, models.Cancel)
+		_, _ = createTaskLog(taskModel, models.Cancel, uid)
 		return
 	}
-	taskLogId, err := createTaskLog(taskModel, models.Running)
+	taskLogId, err := createTaskLog(taskModel, models.Running, uid)
 	if err != nil {
 		logger.Error("任务开始执行#写入任务日志失败-", err)
 		return
@@ -421,7 +422,7 @@ func execDependencyTask(taskModel models.Task, taskResult TaskResult) {
 	}
 	for _, task := range tasks {
 		task.Spec = fmt.Sprintf("依赖任务(主任务ID-%d)", taskModel.Id)
-		ServiceTask.Run(task)
+		ServiceTask.Run(task, 9999)
 	}
 }
 

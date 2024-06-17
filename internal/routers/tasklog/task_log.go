@@ -87,12 +87,12 @@ func parseQueryParams(ctx *macaron.Context) models.CommonMap {
 	var params models.CommonMap = models.CommonMap{}
 	params["TaskId"] = ctx.QueryInt("task_id")
 	params["Protocol"] = ctx.QueryInt("protocol")
+	params["AdminId"] = ctx.QueryInt("admin_id")
 	status := ctx.QueryInt("status")
 	if status >= 0 {
 		status -= 1
 	}
 	params["Status"] = status
 	base.ParsePageAndPageSize(ctx, params)
-
 	return params
 }

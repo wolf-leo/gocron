@@ -235,12 +235,14 @@ func Run(ctx *macaron.Context) string {
 	json := utils.JsonResponse{}
 	taskModel := new(models.Task)
 	task, err := taskModel.Detail(id)
+	uidInterface, _ := ctx.Data["uid"]
+	uid := uidInterface.(int)
 	if err != nil || task.Id <= 0 {
 		return json.CommonFailure("获取任务详情失败", err)
 	}
 
 	task.Spec = "手动运行"
-	service.ServiceTask.Run(task)
+	service.ServiceTask.Run(task, uid)
 
 	return json.Success("任务已开始运行, 请到任务日志中查看结果", nil)
 }
