@@ -42,8 +42,8 @@
 
 ## 下载
 
-- [github releases](https://github.com/wolf-leo/gocron/releases)
-- [gitee releases](https://gitee.com/wolf18/gocron/releases)
+- [GitHub releases](https://github.com/wolf-leo/gocron/releases)
+- [GitEE releases](https://gitee.com/wolf18/gocron/releases)
 
 ## 安装
 
@@ -106,6 +106,20 @@
 
 v2.0
 原作者多年未更新，拿来稍微改了下
+
+## 如何升级?
+
+* 总控调度器升级
+
+> - 暂停`5920`服务，`mv gocron-linux-amd64 gocron-linux-amd64-old` (这里以amd64为例)
+> - 下载最新版本二进制文件，解压 `tar -zxvf gocron-v2.0.x-linux-amd64.tar.gz`
+> - 复制配置文件 `cp -r gocron-linux-amd64-old/conf gocron-linux-amd64`
+> - 启动`5920`服务
+
+* 一般来说，节点服务器不需要升级。
+
+> - 如需升级，暂停5921服务，重新下载最新二进制文件，解压启动即可
+
 
 --------
 
