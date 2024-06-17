@@ -113,26 +113,28 @@
       </el-table-column>
       <el-table-column
         prop="id"
-        width="100"
+        min-width="10"
         align="center"
         label="任务ID">
       </el-table-column>
       <el-table-column
         prop="name"
         label="任务名称"
-      width="150"
+        min-width="30"
         align="center">
       </el-table-column>
       <el-table-column
         prop="tag"
-        label="标签" align="center">
+        label="标签"
+        min-width="10" align="center">
       </el-table-column>
       <el-table-column
         prop="spec"
         label="cron表达式"
+        min-width="15"
         align="center">
       </el-table-column>
-      <el-table-column label="下次执行时间" width="160" align="center">
+      <el-table-column label="下次执行时间" min-width="15" align="center">
         <template slot-scope="scope">
           {{scope.row.next_run_time | formatTime}}
         </template>
@@ -140,10 +142,11 @@
       <el-table-column
         prop="protocol"
         :formatter="formatProtocol"
-        width="120"
+        min-width="10"
         label="执行方式" align="center">
       </el-table-column>
-      <el-table-column width="120" align="center"
+      <el-table-column
+        min-width="10" align="center"
         label="状态" v-if="this.isAdmin">
           <template slot-scope="scope">
             <el-switch
@@ -170,7 +173,7 @@
           </el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="220" v-if="this.isAdmin">
+      <el-table-column label="操作" min-width="25" align="center" v-if="this.isAdmin">
         <template slot-scope="scope">
           <el-row>
             <el-button type="primary" @click="toEdit(scope.row)">编辑</el-button>

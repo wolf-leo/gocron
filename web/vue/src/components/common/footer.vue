@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <span class="version_text">当前版本：v2.0.2</span>
+    <span class="version_text">当前版本：v2.0.3</span>
   </div>
 </template>
 <style>
@@ -15,14 +15,13 @@
 .footer .version_text {
   text-align: right;
   color: #545c64;
-  margin-right: 25px;
-  padding: 0;
-  font-size: .85rem;
+  padding: 2px 0;
+  font-size: .90rem;
   position: fixed;
-  width: 200px;
+  width: 100%;
   background: #FFFFFF;
   bottom: 0;
-  right: 0;
+  right: 35px;
   z-index: 9999;
 }
 </style>
