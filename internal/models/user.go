@@ -85,7 +85,7 @@ func (user *User) Find(id int) error {
 // 用户名是否存在
 func (user *User) UsernameExists(username string, uid int) (int64, error) {
 	if uid > 0 {
-		return Db.Where("name = ? AND id = ?", username, uid).Count(user)
+		return Db.Where("name = ? AND id <> ?", username, uid).Count(user)
 	}
 
 	return Db.Where("name = ?", username).Count(user)
@@ -94,7 +94,7 @@ func (user *User) UsernameExists(username string, uid int) (int64, error) {
 // 邮箱地址是否存在
 func (user *User) EmailExists(email string, uid int) (int64, error) {
 	if uid > 0 {
-		return Db.Where("email = ? AND id = ?", email, uid).Count(user)
+		return Db.Where("email = ? AND id <> ?", email, uid).Count(user)
 	}
 
 	return Db.Where("email = ?", email).Count(user)
