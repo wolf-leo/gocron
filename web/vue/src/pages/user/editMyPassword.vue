@@ -33,13 +33,16 @@ export default {
       },
       formRules: {
         old_password: [
-          {required: true, message: '请输入原密码', trigger: 'blur'}
+          {required: true, message: '请输入原密码', trigger: 'blur'},
+          {min: 1, max: 30, message: '密码长度错误', trigger: 'blur'}
         ],
         new_password: [
-          {required: true, message: '请输入新密码', trigger: 'blur'}
+          {required: true, message: '请输入新密码', trigger: 'blur'},
+          {min: 6, max: 20, message: '密码长度在 6 到 20 个字符', trigger: 'blur'}
         ],
         confirm_new_password: [
-          {required: true, message: '请再次输入新密码', trigger: 'blur'}
+          {required: true, message: '请再次输入新密码', trigger: 'blur'},
+          {min: 6, max: 20, message: '密码长度在 6 到 20 个字符', trigger: 'blur'}
         ]
       }
     }
@@ -50,12 +53,30 @@ export default {
         if (!valid) {
           return false
         }
+        if (this.form.confirm_new_password !== this.form.new_password) {
+          this.$message.error('两次密码不一致')
+          return false
+        }
+        if (this.form.confirm_new_password === this.form.old_password) {
+          this.$message.error('您的新旧密码不能相同')
+          return false
+        }
         this.save()
       })
     },
     save () {
-      userService.editMyPassword(this.form, () => {
-        this.$router.back()
+      userService.editMyPassword(this.form, (e, code, msg) => {
+        if (code !== 0) {
+          this.$message.error(msg)
+          return
+        }
+        this.$message.success({
+          duration: 1000,
+          message: '操作成功',
+          onClose: () => {
+            this.$router.back()
+          }
+        })
       })
     },
     cancel () {

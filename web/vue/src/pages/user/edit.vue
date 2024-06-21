@@ -6,7 +6,7 @@
           <el-input v-model="form.id" type="hidden"></el-input>
         </el-form-item>
         <el-form-item label="用户名" prop="name">
-          <el-input v-model="form.name"></el-input>
+          <el-input v-model="form.name" :disabled="form.id>0"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="form.email"></el-input>
@@ -98,8 +98,18 @@ export default {
       })
     },
     save () {
-      userService.update(this.form, () => {
-        this.$router.push('/user')
+      userService.update(this.form, (e, code, msg) => {
+        if (code !== 0) {
+          this.$message.error(msg)
+          return
+        }
+        this.$message.success({
+          duration: 1000,
+          message: '操作成功',
+          onClose: () => {
+            this.$router.push('/user')
+          }
+        })
       })
     },
     cancel () {

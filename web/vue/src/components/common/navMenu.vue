@@ -9,16 +9,16 @@
       router>
       <el-row>
         <el-col :span="2">
-          <el-menu-item index="/task">任务管理</el-menu-item>
+          <el-menu-item index="/task">📝任务管理</el-menu-item>
         </el-col>
         <el-col :span="2">
-          <el-menu-item index="/host">任务节点</el-menu-item>
+          <el-menu-item index="/host">📆任务节点</el-menu-item>
         </el-col>
         <el-col :span="2">
-          <el-menu-item v-if="this.$store.getters.user.isAdmin" index="/user">用户管理</el-menu-item>
+          <el-menu-item v-if="this.$store.getters.user.isAdmin" index="/user">⛄用户管理</el-menu-item>
         </el-col>
         <el-col :span="2">
-          <el-menu-item v-if="this.$store.getters.user.isAdmin" index="/system">系统管理</el-menu-item>
+          <el-menu-item v-if="this.$store.getters.user.isAdmin" index="/system">💻系统管理</el-menu-item>
         </el-col>
         <el-col :span="2" style="float:right;text-align: right;">
           <el-submenu v-if="this.$store.getters.user.token" index="userStatus">

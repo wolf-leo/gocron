@@ -7,8 +7,8 @@
       text-color="#fff"
       active-text-color="#ffd04b"
       router>
-      <el-menu-item index="/system">通知配置</el-menu-item>
-      <el-menu-item index="/system/login-log">登录日志</el-menu-item>
+      <el-menu-item index="/system">📨通知配置</el-menu-item>
+      <el-menu-item index="/system/login-log">📑登录日志</el-menu-item>
     </el-menu>
   </el-aside>
 </template>
