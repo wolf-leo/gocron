@@ -62,7 +62,7 @@ export default {
       })
     },
     save () {
-      userService.editPassword(this.form, (e,code,msg) => {
+      userService.editPassword(this.form, (e, code, msg) => {
         if (code !== 0) {
           this.$message.error(msg)
           return
