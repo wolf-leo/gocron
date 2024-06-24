@@ -92,7 +92,7 @@ func Store(ctx *macaron.Context, form HostForm) string {
 	json := utils.JsonResponse{}
 	hostModel := new(models.Host)
 	id := form.Id
-	nameExist, err := hostModel.NameExists(form.Name, form.Id)
+	nameExist, err := hostModel.NameExists(form.Name, form.Port, form.Id)
 	if err != nil {
 		return json.CommonFailure("操作失败", err)
 	}

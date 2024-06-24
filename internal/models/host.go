@@ -45,13 +45,13 @@ func (host *Host) Find(id int) error {
 	return err
 }
 
-func (host *Host) NameExists(name string, id int16) (bool, error) {
+func (host *Host) NameExists(name string, port int, id int16) (bool, error) {
 	if id == 0 {
-		count, err := Db.Where("name = ?", name).Count(host)
+		count, err := Db.Where("name = ? AND port = ?", name, port).Count(host)
 		return count > 0, err
 	}
 
-	count, err := Db.Where("name = ? AND id != ?", name, id).Count(host)
+	count, err := Db.Where("name = ? AND port = ? AND id != ?", name, port, id).Count(host)
 	return count > 0, err
 }
 
