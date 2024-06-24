@@ -18,7 +18,7 @@ BINARY_NAME=''
 MAIN_FILE=""
  
 # 提取git最新tag作为应用版本
-VERSION='v2.0.4'
+VERSION='v2.0.5'
 # 最新git commit id
 GIT_COMMIT_ID=''
  
