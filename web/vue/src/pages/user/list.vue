@@ -1,12 +1,10 @@
 <template>
   <el-container>
     <el-main>
-      <el-row type="flex" justify="end">
-        <el-col :span="2">
-          <el-button type="primary"  @click="toEdit(null)">新增</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="info" @click="refresh">刷新</el-button>
+      <el-row type="flex" justify="right">
+        <el-col>
+          <el-button type="primary"  @click="toEdit(null)" size="small">新增</el-button>
+          <el-button type="info" @click="refresh" size="small">刷新</el-button>
         </el-col>
       </el-row>
       <el-pagination
@@ -56,12 +54,13 @@
         </el-table-column>
         <el-table-column label="操作" align="center" width="300" v-if="this.isAdmin">
           <template slot-scope="scope">
-            <el-row>
-              <el-button type="primary" @click="toEdit(scope.row)">编辑</el-button>
-              <el-button type="success" @click="editPassword(scope.row)">修改密码</el-button>
-              <el-button type="danger" @click="remove(scope.row)">删除</el-button>
+            <el-row justify="center">
+              <el-button-group>
+                <el-button type="primary" @click="toEdit(scope.row)" size="small">编辑</el-button>
+                <el-button type="success" @click="editPassword(scope.row)" size="small">修改密码</el-button>
+                <el-button type="danger" @click="remove(scope.row)" size="small">删除</el-button>
+              </el-button-group>
             </el-row>
-            <br>
           </template>
         </el-table-column>
       </el-table>

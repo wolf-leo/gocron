@@ -43,9 +43,9 @@
           </el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="submit()">保存</el-button>
+          <el-button type="primary" @click="submit()" size="small">保存</el-button>
         </el-form-item>
-        <el-button type="primary" @click="createUser">新增用户</el-button> <br><br>
+        <el-button type="primary" @click="createUser" size="small">新增用户</el-button> <br><br>
         <h3>通知用户</h3>
         <el-tag
           v-for="item in receivers"
@@ -67,7 +67,7 @@
             <el-input v-model.trim="email"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="saveUser">确 定</el-button>
+            <el-button type="primary" @click="saveUser" size="small">确 定</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>

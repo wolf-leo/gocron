@@ -37,6 +37,16 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        background
+        layout="prev, pager, next, sizes, total"
+        :total="logTotal"
+        :page-size="20"
+        @size-change="changePageSize"
+        @current-change="changePage"
+        @prev-click="changePage"
+        @next-click="changePage">
+      </el-pagination>
     </el-main>
   </el-container>
 </template>

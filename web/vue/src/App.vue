@@ -124,4 +124,10 @@ footer {
 .el-pagination{
   padding: 10px 0;
 }
+
+.el-row.is-justify-right {
+  text-align: right;
+  margin: 10px 0;
+}
+
 </style>

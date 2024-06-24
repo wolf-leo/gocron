@@ -2,14 +2,14 @@
   <el-container>
     <task-sidebar></task-sidebar>
     <el-main>
-      <el-form :inline="true">
-        <el-form-item label="任务ID">
+      <el-form :inline="true" ref="searchParams" :model="searchParams">
+        <el-form-item label="任务ID" size="small" prop="task_id">
           <el-input v-model.trim="searchParams.task_id"></el-input>
         </el-form-item>
-        <el-form-item label="管理员ID">
+        <el-form-item label="管理员ID" size="small" prop="admin_id">
           <el-input v-model.trim="searchParams.admin_id"></el-input>
         </el-form-item>
-        <el-form-item label="执行方式">
+        <el-form-item label="执行方式" size="small" prop="protocol">
           <el-select v-model.trim="searchParams.protocol" placeholder="执行方式">
             <el-option label="全部" value=""></el-option>
             <el-option
@@ -20,7 +20,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item label="状态" prop="status" size="small">
           <el-select v-model.trim="searchParams.status">
             <el-option label="全部" value=""></el-option>
             <el-option
@@ -31,16 +31,13 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="search()">搜索</el-button>
-        </el-form-item>
+        <span><el-button type="primary" size="small" @click="search()">搜索</el-button></span>
+        <span><el-button type="info" size="small" @click="resetForm">重置</el-button></span>
       </el-form>
-      <el-row type="flex" justify="end">
-        <el-col :span="3">
-          <el-button type="danger" v-if="this.$store.getters.user.isAdmin" @click="clearLog">清空日志</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="info" @click="refresh">刷新</el-button>
+      <el-row type="flex" justify="right">
+        <el-col>
+          <el-button type="danger" v-if="this.$store.getters.user.isAdmin" @click="clearLog" size="small">清空日志</el-button>
+          <el-button type="info" @click="refresh" size="small">刷新</el-button>
         </el-col>
       </el-row>
       <el-pagination
@@ -103,7 +100,7 @@
         </el-table-column>
         <el-table-column label="任务节点" min-width="30">
           <template slot-scope="scope">
-            <div v-html="scope.row.hostname">{{ scope.row.hostname }}</div>
+            <div>{{ scope.row.hostname }}</div>
           </template>
         </el-table-column>
         <el-table-column label="执行时长" min-width="30">
@@ -129,15 +126,15 @@
           min-width="15"
           align="center" v-if="this.isAdmin">
           <template slot-scope="scope">
-            <el-button type="success"
+            <el-button type="success"  size="small"
                        v-if="scope.row.status === 2"
                        @click="showTaskResult(scope.row)">查看结果
             </el-button>
-            <el-button type="warning"
+            <el-button type="warning"  size="small"
                        v-if="scope.row.status === 0"
                        @click="showTaskResult(scope.row)">查看结果
             </el-button>
-            <el-button type="danger"
+            <el-button type="danger"  size="small"
                        v-if="scope.row.status === 1 && scope.row.protocol === 2"
                        @click="stopTask(scope.row)">停止任务
             </el-button>
@@ -147,18 +144,28 @@
           label="执行结果"
           width="120" v-else>
           <template slot-scope="scope">
-            <el-button type="success"
+            <el-button type="success"  size="small"
                        v-if="scope.row.status === 2"
                        @click="showTaskResult(scope.row)">查看结果
             </el-button>
-            <el-button type="warning"
+            <el-button type="warning"  size="small"
                        v-if="scope.row.status === 0"
                        @click="showTaskResult(scope.row)">查看结果
             </el-button>
           </template>
         </el-table-column>
       </el-table>
-      <el-dialog title="任务执行结果" :visible.sync="dialogVisible">
+      <el-pagination
+        background
+        layout="prev, pager, next, sizes, total"
+        :total="logTotal"
+        :page-size="20"
+        @size-change="changePageSize"
+        @current-change="changePage"
+        @prev-click="changePage"
+        @next-click="changePage">
+      </el-pagination>
+      <el-dialog title="任务执行结果" :visible.sync="dialogVisible" custom-class="home-confirm-dialog">
         <div>
           <pre>{{ currentTaskResult.command }}</pre>
         </div>
@@ -255,6 +262,10 @@ export default {
         }
       })
     },
+    resetForm () {
+      this.$refs['searchParams'].resetFields()
+      this.refresh()
+    },
     clearLog () {
       this.$appConfirm(() => {
         taskLogService.clear(() => {
@@ -281,7 +292,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style>
 pre {
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -289,4 +300,18 @@ pre {
   background-color: #4C4C4C;
   color: white;
 }
+
+.home-confirm-dialog{
+  text-align: center;
+  overflow: hidden;
+  height: auto;
+  z-index: 9999 !important;
+}
+
+.home-confirm-dialog .el-dialog__body {
+  height: 50vh !important;
+  overflow: auto;
+  text-align: left;
+}
+
 </style>

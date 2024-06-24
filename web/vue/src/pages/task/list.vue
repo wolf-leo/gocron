@@ -2,20 +2,18 @@
 <el-container>
   <task-sidebar></task-sidebar>
   <el-main>
-    <el-form :inline="true" >
+    <el-form :inline="true" ref="searchParams" :model="searchParams">
       <el-row>
-        <el-form-item label="任务ID">
+        <el-form-item label="任务ID" prop="id" size="small">
           <el-input v-model.trim="searchParams.id"></el-input>
         </el-form-item>
-        <el-form-item label="任务名称">
+        <el-form-item label="任务名称" prop="name" size="small">
           <el-input v-model.trim="searchParams.name"></el-input>
         </el-form-item>
-        <el-form-item label="标签">
+        <el-form-item label="标签" prop="tag" size="small">
           <el-input v-model.trim="searchParams.tag"></el-input>
         </el-form-item>
-      </el-row>
-      <el-row>
-        <el-form-item label="执行方式">
+        <el-form-item label="执行方式" prop="protocol" size="small">
           <el-select v-model.trim="searchParams.protocol">
             <el-option label="全部" value=""></el-option>
             <el-option
@@ -26,7 +24,9 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="任务节点">
+      </el-row>
+      <el-row>
+        <el-form-item label="任务节点" prop="host_id" size="small">
           <el-select v-model.trim="searchParams.host_id">
             <el-option label="全部" value=""></el-option>
             <el-option
@@ -37,7 +37,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item label="状态" prop="status" size="small">
           <el-select v-model.trim="searchParams.status">
             <el-option label="全部" value=""></el-option>
             <el-option
@@ -48,17 +48,14 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="search()">搜索</el-button>
-        </el-form-item>
+        <span><el-button type="primary" size="small" @click="search()">搜索</el-button></span>
+        <span><el-button type="info" size="small" @click="resetForm">重置</el-button></span>
       </el-row>
     </el-form>
-    <el-row type="flex" justify="end">
-      <el-col :span="2">
-        <el-button type="primary" @click="toEdit(null)" v-if="this.$store.getters.user.isAdmin">新增</el-button>
-      </el-col>
-      <el-col :span="2">
-        <el-button type="info" @click="refresh">刷新</el-button>
+    <el-row type="flex" justify="right">
+      <el-col>
+        <el-button type="primary" v-if="this.$store.getters.user.isAdmin" @click="toEdit(null)" size="small">新增</el-button>
+        <el-button type="info" @click="refresh" size="small">刷新</el-button>
       </el-col>
     </el-row>
     <el-pagination
@@ -176,17 +173,31 @@
       <el-table-column label="操作" min-width="25" align="center" v-if="this.isAdmin">
         <template slot-scope="scope">
           <el-row>
-            <el-button type="primary" @click="toEdit(scope.row)">编辑</el-button>
-            <el-button type="success" @click="runTask(scope.row)">手动执行</el-button>
+            <el-button-group>
+              <el-button type="primary" @click="toEdit(scope.row)" size="small">编辑</el-button>
+              <el-button type="success" @click="runTask(scope.row)" size="small">手动执行</el-button>
+            </el-button-group>
           </el-row>
           <br>
           <el-row>
-            <el-button type="info" @click="jumpToLog(scope.row)">查看日志</el-button>
-            <el-button type="danger" @click="remove(scope.row)">删除</el-button>
+            <el-button-group>
+              <el-button type="info" @click="jumpToLog(scope.row)" size="small">查看日志</el-button>
+              <el-button type="danger" @click="remove(scope.row)" size="small">删除</el-button>
+            </el-button-group>
           </el-row>
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      background
+      layout="prev, pager, next, sizes, total"
+      :total="taskTotal"
+      :page-size="20"
+      @size-change="changePageSize"
+      @current-change="changePage"
+      @prev-click="changePage"
+      @next-click="changePage">
+    </el-pagination>
   </el-main>
 </el-container>
 </template>
@@ -304,6 +315,10 @@ export default {
           callback()
         }
       })
+    },
+    resetForm () {
+      this.$refs['searchParams'].resetFields()
+      this.refresh()
     },
     runTask (item) {
       this.$appConfirm(() => {
