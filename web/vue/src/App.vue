@@ -88,7 +88,6 @@ footer {
   width: 120px !important;
   height: 100%;
   display: block;
-  z-index: 99999;
 }
 
 .el-aside .el-menu {
