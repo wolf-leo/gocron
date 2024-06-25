@@ -1,6 +1,6 @@
 FROM alpine:3.7
 
-ENV GOCRON_AGENT_VERSION=v2.0.5
+ENV GOCRON_AGENT_VERSION=v2.0.6
 
 RUN apk add --no-cache ca-certificates  tzdata bash \
     &&  mkdir -p /app \

@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <span class="version_text">当前版本：v2.0.5</span>
+    <span class="version_text">当前版本：v2.0.6</span>
   </div>
 </template>
 <style>
