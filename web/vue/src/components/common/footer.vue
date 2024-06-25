@@ -44,9 +44,11 @@ a {
 .footer {
   color: #333333;
   background: #FFFFFF;
-  position: fixed;
   bottom: 0;
   width: 100%;
+  height: 25px;
+  z-index: 111;
+  position: absolute;
 }
 
 .footer .version_text {
@@ -54,7 +56,7 @@ a {
   color: #545c64;
   padding: 2px 0;
   font-size: .90rem;
-  right: 35px;
+  right: 15px;
   z-index: 9999;
   position: absolute;
   bottom: 0;
