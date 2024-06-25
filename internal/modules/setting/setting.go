@@ -36,9 +36,12 @@ type Setting struct {
 
 	ConcurrencyQueue int
 	AuthSecret       string
+
+	LogWrite       bool // 是否开启日志写入
+	CommandLogShow bool // 控制台是否输出日志
 }
 
-// 读取配置
+// Read 读取配置
 func Read(filename string) (*Setting, error) {
 	config, err := ini.Load(filename)
 	if err != nil {
@@ -74,6 +77,8 @@ func Read(filename string) (*Setting, error) {
 	s.CAFile = section.Key("ca_file").MustString("")
 	s.CertFile = section.Key("cert_file").MustString("")
 	s.KeyFile = section.Key("key_file").MustString("")
+	s.LogWrite = section.Key("log_write").MustBool(true)
+	s.CommandLogShow = section.Key("command_log_show").MustBool(true)
 
 	if s.EnableTLS {
 		if !utils.FileExist(s.CAFile) {
@@ -92,7 +97,7 @@ func Read(filename string) (*Setting, error) {
 	return &s, nil
 }
 
-// 写入配置
+// Write 写入配置
 func Write(config []string, filename string) error {
 	if len(config) == 0 {
 		return errors.New("参数不能为空")

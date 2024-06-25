@@ -55,7 +55,7 @@ func Register(m *macaron.Macaron) {
 			return
 		}
 
-		io.Copy(ctx.Resp, file)
+		_, _ = io.Copy(ctx.Resp, file)
 
 	})
 	// 系统安装
@@ -132,6 +132,16 @@ func Register(m *macaron.Macaron) {
 		m.Post("/task/disable/:id", task.Disable)
 	}, apiAuth)
 
+	// API FOR APP
+	m.Group("/v2", func() {
+		m.Handlers(func(ctx *macaron.Context) {
+			ctx.Resp.Header().Set("Access-Control-Allow-Origin", "*")
+			ctx.Resp.Header().Set("Access-Control-Allow-Headers", "content-type,token,auth-token")
+			ctx.Resp.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
+		})
+		m.Post("/task/log", tasklog.Index)
+	}, apiAuth)
+
 	// 404错误
 	m.NotFound(func(ctx *macaron.Context) string {
 		jsonResp := utils.JsonResponse{}
@@ -146,9 +156,16 @@ func Register(m *macaron.Macaron) {
 	})
 }
 
-// 中间件注册
+// RegisterMiddleware 中间件注册
 func RegisterMiddleware(m *macaron.Macaron) {
-	m.Use(macaron.Logger())
+
+	commandLogShow := true
+	if app.Installed {
+		commandLogShow = app.Setting.CommandLogShow
+	}
+	if commandLogShow {
+		m.Use(macaron.Logger())
+	}
 	m.Use(macaron.Recovery())
 	if macaron.Env != macaron.DEV {
 		m.Use(gzip.Gziper())
@@ -157,8 +174,9 @@ func RegisterMiddleware(m *macaron.Macaron) {
 		macaron.Static(
 			"",
 			macaron.StaticOptions{
-				Prefix:     staticDir,
-				FileSystem: statikFS,
+				Prefix:      staticDir,
+				FileSystem:  statikFS,
+				SkipLogging: !commandLogShow,
 			},
 		),
 	)
@@ -185,7 +203,7 @@ func checkAppInstall(ctx *macaron.Context) {
 	jsonResp := utils.JsonResponse{}
 
 	data := jsonResp.Failure(utils.AppNotInstall, "应用未安装")
-	ctx.Write([]byte(data))
+	_, _ = ctx.Write([]byte(data))
 }
 
 // IP验证, 通过反向代理访问gocron，需设置Header X-Real-IP才能获取到客户端真实IP
@@ -207,7 +225,7 @@ func ipAuth(ctx *macaron.Context) {
 
 	data := jsonResp.Failure(utils.UnauthorizedError, "您无权限访问")
 
-	ctx.Write([]byte(data))
+	_, _ = ctx.Write([]byte(data))
 }
 
 // 用户认证
@@ -215,12 +233,15 @@ func userAuth(ctx *macaron.Context) {
 	if !app.Installed {
 		return
 	}
-	user.RestoreToken(ctx)
+	_ = user.RestoreToken(ctx)
 	if user.IsLogin(ctx) {
 		return
 	}
 	uri := strings.TrimRight(ctx.Req.URL.Path, "/")
 	if strings.HasPrefix(uri, "/v1") {
+		return
+	}
+	if strings.HasPrefix(uri, "/v2") {
 		return
 	}
 	excludePaths := []string{"", "/user/login", "/install/status"}
@@ -231,7 +252,7 @@ func userAuth(ctx *macaron.Context) {
 	}
 	jsonResp := utils.JsonResponse{}
 	data := jsonResp.Failure(utils.AuthError, "认证失败")
-	ctx.Write([]byte(data))
+	_, _ = ctx.Write([]byte(data))
 
 }
 
@@ -245,6 +266,9 @@ func urlAuth(ctx *macaron.Context) {
 	}
 	uri := strings.TrimRight(ctx.Req.URL.Path, "/")
 	if strings.HasPrefix(uri, "/v1") {
+		return
+	}
+	if strings.HasPrefix(uri, "/v2") {
 		return
 	}
 	// 普通用户允许访问的URL地址
@@ -267,7 +291,7 @@ func urlAuth(ctx *macaron.Context) {
 	jsonResp := utils.JsonResponse{}
 
 	data := jsonResp.Failure(utils.UnauthorizedError, "您无权限访问")
-	ctx.Write([]byte(data))
+	_, _ = ctx.Write([]byte(data))
 }
 
 /** API接口签名验证 **/
@@ -283,32 +307,32 @@ func apiAuth(ctx *macaron.Context) {
 	json := utils.JsonResponse{}
 	if apiKey == "" || apiSecret == "" {
 		msg := json.CommonFailure("使用API前, 请先配置密钥")
-		ctx.Write([]byte(msg))
+		_, _ = ctx.Write([]byte(msg))
 		return
 	}
 	currentTimestamp := time.Now().Unix()
-	time := ctx.QueryInt64("time")
-	if time <= 0 {
+	timeInt := ctx.QueryInt64("time")
+	if timeInt <= 0 {
 		msg := json.CommonFailure("参数time不能为空")
-		ctx.Write([]byte(msg))
+		_, _ = ctx.Write([]byte(msg))
 		return
 	}
-	if time < (currentTimestamp - 1800) {
+	if timeInt < (currentTimestamp - 1800) {
 		msg := json.CommonFailure("time无效")
-		ctx.Write([]byte(msg))
+		_, _ = ctx.Write([]byte(msg))
 		return
 	}
 	sign := ctx.QueryTrim("sign")
 	if sign == "" {
 		msg := json.CommonFailure("参数sign不能为空")
-		ctx.Write([]byte(msg))
+		_, _ = ctx.Write([]byte(msg))
 		return
 	}
-	raw := apiKey + strconv.FormatInt(time, 10) + strings.TrimSpace(ctx.Req.URL.Path) + apiSecret
+	raw := apiKey + strconv.FormatInt(timeInt, 10) + strings.TrimSpace(ctx.Req.URL.Path) + apiSecret
 	realSign := utils.Md5(raw)
 	if sign != realSign {
 		msg := json.CommonFailure("签名验证失败")
-		ctx.Write([]byte(msg))
+		_, _ = ctx.Write([]byte(msg))
 		return
 	}
 }

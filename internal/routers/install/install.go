@@ -120,6 +120,8 @@ func writeConfig(form InstallForm) error {
 		"ca_file", "",
 		"cert_file", "",
 		"key_file", "",
+		"log_write", "true",
+		"command_log_show", "true",
 	}
 
 	return setting.Write(dbConfig, app.AppConfig)

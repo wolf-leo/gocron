@@ -35,7 +35,7 @@ var (
 
 // InitEnv 初始化
 func InitEnv(versionString string) {
-	logger.InitLogger()
+	logger.InitLogger(true)
 	var err error
 	// AppDir, err = goutil.WorkDir()
 	AppDir, err = utils.GetCurrentProjectPath()
@@ -49,6 +49,17 @@ func InitEnv(versionString string) {
 	createDirIfNotExists(ConfDir, LogDir)
 	Installed = IsInstalled()
 	VersionId = ToNumberVersion(versionString)
+
+	if Installed {
+		config, err := setting.Read(AppConfig)
+		logWriteStatus := true
+		if err == nil {
+			Setting = config
+			logWriteStatus = Setting.LogWrite
+		}
+		logger.InitLogger(logWriteStatus)
+	}
+
 }
 
 // IsInstalled 判断应用是否已安装

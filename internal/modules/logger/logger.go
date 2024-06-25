@@ -23,7 +23,10 @@ const (
 	FATAL
 )
 
-func InitLogger() {
+var logWriteStatus bool = true
+
+func InitLogger(writeBool bool) {
+	logWriteStatus = writeBool
 	config := getLogConfig()
 	l, err := seelog.LoggerFromConfigAsString(config)
 	if err != nil {
@@ -79,8 +82,10 @@ func Fatalf(format string, v ...interface{}) {
 }
 
 func write(level Level, v ...interface{}) {
+	if !logWriteStatus {
+		return
+	}
 	defer logger.Flush()
-
 	content := ""
 	if macaron.Env == macaron.DEV {
 		pc, file, line, ok := runtime.Caller(2)
@@ -105,6 +110,9 @@ func write(level Level, v ...interface{}) {
 }
 
 func writef(level Level, format string, v ...interface{}) {
+	if !logWriteStatus {
+		return
+	}
 	defer logger.Flush()
 
 	content := ""

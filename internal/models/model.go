@@ -94,7 +94,7 @@ func CreateDb() *xorm.Engine {
 		engine.Logger().SetLevel(log.LOG_DEBUG)
 	}
 
-	go keepDbAlived(engine)
+	// go keepDbAlived(engine)
 
 	return engine
 }
