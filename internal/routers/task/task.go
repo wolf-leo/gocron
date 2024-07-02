@@ -37,6 +37,7 @@ type TaskForm struct {
 	NotifyType       int8 `binding:"In(1,2,3,4)"`
 	NotifyReceiverId string
 	NotifyKeyword    string
+	Sort             int
 }
 
 func (f TaskForm) Error(ctx *macaron.Context, errs binding.Errors) {
@@ -121,6 +122,7 @@ func Store(ctx *macaron.Context, form TaskForm) string {
 	taskModel.NotifyKeyword = form.NotifyKeyword
 	taskModel.Spec = form.Spec
 	taskModel.Level = form.Level
+	taskModel.Sort = form.Sort
 	taskModel.DependencyStatus = form.DependencyStatus
 	taskModel.DependencyTaskId = strings.TrimSpace(form.DependencyTaskId)
 	if taskModel.NotifyStatus > 0 && taskModel.NotifyType != 3 && taskModel.NotifyReceiverId == "" {

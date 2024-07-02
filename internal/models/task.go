@@ -63,6 +63,7 @@ type Task struct {
 	BaseModel        `json:"-" xorm:"-"`
 	Hosts            []TaskHostDetail `json:"hosts" xorm:"-"`
 	NextRunTime      time.Time        `json:"next_run_time" xorm:"-"`
+	Sort             int              `json:"sort" xorm:"int notnull index default 0"`
 }
 
 func taskHostTableName() []string {
@@ -83,7 +84,7 @@ func (task *Task) UpdateBean(id int) (int64, error) {
 	return Db.ID(id).
 		Cols(`name,spec,protocol,command,timeout,multi,
 			retry_times,retry_interval,remark,notify_status,
-			notify_type,notify_receiver_id, dependency_task_id, dependency_status, tag,http_method, notify_keyword`).
+			notify_type,notify_receiver_id, dependency_task_id, dependency_status, tag,http_method, notify_keyword,sort`).
 		Update(task)
 }
 
@@ -197,7 +198,7 @@ func (task *Task) Detail(id int) (Task, error) {
 func (task *Task) List(params CommonMap) ([]Task, error) {
 	task.parsePageAndPageSize(params)
 	list := make([]Task, 0)
-	session := Db.Alias("t").Join("LEFT", taskHostTableName(), "t.id = th.task_id")
+	session := Db.Alias("t").Join("LEFT", taskHostTableName(), "t.id = th.task_id").OrderBy("sort ASC,id DESC")
 	task.parseWhere(session, params)
 	err := session.GroupBy("t.id").Desc("t.id").Cols("t.*").Limit(task.PageSize, task.pageLimitOffset()).Find(&list)
 

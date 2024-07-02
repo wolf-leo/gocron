@@ -3,7 +3,7 @@
     <el-main>
       <el-row type="flex" justify="right">
         <el-col>
-          <el-button type="primary"  @click="toEdit(null)" size="small">新增</el-button>
+          <el-button type="primary" @click="toEdit(null)" size="small">新增</el-button>
           <el-button type="info" @click="refresh" size="small">刷新</el-button>
         </el-col>
       </el-row>
@@ -12,6 +12,7 @@
         layout="prev, pager, next, sizes, total"
         :total="userTotal"
         :page-size="20"
+        :current-page="searchParams.page"
         @size-change="changePageSize"
         @current-change="changePage"
         @prev-click="changePage"
@@ -64,15 +65,27 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        background
+        layout="prev, pager, next, sizes, total"
+        :total="userTotal"
+        :page-size="20"
+        :current-page="searchParams.page"
+        @size-change="changePageSize"
+        @current-change="changePage"
+        @prev-click="changePage"
+        @next-click="changePage">
+      </el-pagination>
     </el-main>
   </el-container>
 </template>
 
 <script>
 import userService from '../../api/user'
+
 export default {
   name: 'user-list',
-  data () {
+  data() {
     return {
       users: [],
       userTotal: 0,
@@ -83,32 +96,32 @@ export default {
       isAdmin: this.$store.getters.user.isAdmin
     }
   },
-  created () {
+  created() {
     this.search()
   },
   methods: {
-    changeStatus (item) {
+    changeStatus(item) {
       if (item.status) {
         userService.enable(item.id)
       } else {
         userService.disable(item.id)
       }
     },
-    formatRole (row, col) {
+    formatRole(row, col) {
       if (row[col.property] === 1) {
         return '管理员'
       }
       return '普通用户'
     },
-    changePage (page) {
+    changePage(page) {
       this.searchParams.page = page
       this.search()
     },
-    changePageSize (pageSize) {
+    changePageSize(pageSize) {
       this.searchParams.page_size = pageSize
       this.search()
     },
-    search (callback = null) {
+    search(callback = null) {
       userService.list(this.searchParams, (data) => {
         this.users = data.data
         this.userTotal = data.total
@@ -117,14 +130,14 @@ export default {
         }
       })
     },
-    remove (item) {
+    remove(item) {
       this.$appConfirm(() => {
         userService.remove(item.id, () => {
           this.refresh()
         })
       })
     },
-    toEdit (item) {
+    toEdit(item) {
       let path = ''
       if (item === null) {
         path = '/user/create'
@@ -133,12 +146,12 @@ export default {
       }
       this.$router.push(path)
     },
-    refresh () {
+    refresh() {
       this.search(() => {
         this.$message.success('刷新成功')
       })
     },
-    editPassword (item) {
+    editPassword(item) {
       this.$router.push(`/user/edit-password/${item.id}`)
     }
   }

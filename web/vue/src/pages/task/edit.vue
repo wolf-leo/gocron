@@ -124,6 +124,13 @@
           </el-col>
         </el-row>
         <el-row>
+          <el-col :span="16">
+            <el-form-item label="排序" prop="sort">
+              <el-input v-model.number.trim="form.sort" placeholder="默认0，越小靠前" ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col>
             <el-alert
               title="任务执行超时强制结束, 取值0-86400(秒), 默认0, 不限制"
@@ -275,6 +282,7 @@ export default {
         command: '',
         host_id: '',
         timeout: 0,
+        sort: 0,
         multi: 2,
         notify_status: 1,
         notify_type: 2,
@@ -423,6 +431,7 @@ export default {
       this.form.id = taskData.id
       this.form.name = taskData.name
       this.form.tag = taskData.tag
+      this.form.sort = taskData.sort
       this.form.level = taskData.level
       if (taskData.dependency_status) {
         this.form.dependency_status = taskData.dependency_status
