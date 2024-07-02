@@ -18,7 +18,7 @@ export default {
   name: 'app-footer',
   data () {
     return {
-      version: 'v2.0.6',
+      version: 'v2.0.7',
       dialogVisible: false
     }
   },
