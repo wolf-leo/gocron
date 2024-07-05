@@ -70,7 +70,7 @@
       @prev-click="changePage"
       @next-click="changePage">
     </el-pagination>
-    <template v-if="listStyle===2">
+    <template v-if="listStyle==='2'">
       <el-row :gutter="10">
         <el-col :span="6" v-for="(o, index) in tasks.length" :key="o">
           <el-card class="task_card" :body-style="{ padding: '10px' }">
@@ -279,7 +279,7 @@ export default {
       tasks: [],
       hosts: [],
       dialogData: [],
-      listStyle: 1,
+      listStyle: sessionStorage.getItem('taskLogStyle') || '1',
       taskTotal: 0,
       dialogVisible: false,
       searchParams: {
@@ -421,7 +421,8 @@ export default {
       })
     },
     changeStyle () {
-      let nowStyle = this.listStyle === 1 ? 2 : 1
+      let nowStyle = this.listStyle === '1' ? '2' : '1'
+      sessionStorage.setItem('taskLogStyle', nowStyle.toString())
       this.listStyle = nowStyle
     },
     showMore (item) {
