@@ -279,7 +279,7 @@ export default {
       tasks: [],
       hosts: [],
       dialogData: [],
-      listStyle: sessionStorage.getItem('taskLogStyle') || '1',
+      listStyle: localStorage.getItem('taskLogStyle') || '1',
       taskTotal: 0,
       dialogVisible: false,
       searchParams: {
@@ -422,7 +422,7 @@ export default {
     },
     changeStyle () {
       let nowStyle = this.listStyle === '1' ? '2' : '1'
-      sessionStorage.setItem('taskLogStyle', nowStyle.toString())
+      localStorage.setItem('taskLogStyle', nowStyle.toString())
       this.listStyle = nowStyle
     },
     showMore (item) {
