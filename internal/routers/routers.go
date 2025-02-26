@@ -1,9 +1,11 @@
 package routers
 
 import (
+	"github.com/ouqiang/gocron/internal/routers/base"
 	"io"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -139,7 +141,10 @@ func Register(m *macaron.Macaron) {
 			ctx.Resp.Header().Set("Access-Control-Allow-Headers", "content-type,token,auth-token")
 			ctx.Resp.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
 		})
+		m.Post("/ping", base.Ping)
 		m.Post("/task/log", tasklog.Index)
+		m.Post("/task/log", tasklog.Index)
+		m.Post("/user/login", user.ValidateLogin)
 	}, apiAuth)
 
 	// 404错误
@@ -277,6 +282,7 @@ func urlAuth(ctx *macaron.Context) {
 		"/install/status",
 		"/task",
 		"/task/log",
+		"/task/run/\\d+$",
 		"/host",
 		"/host/all",
 		"/user/login",
@@ -285,6 +291,11 @@ func urlAuth(ctx *macaron.Context) {
 	for _, path := range allowPaths {
 		if path == uri {
 			return
+		}
+		if strings.Contains(path, "d+$") {
+			if regexp.MustCompile("^" + path).MatchString(uri) {
+				return
+			}
 		}
 	}
 
@@ -306,7 +317,7 @@ func apiAuth(ctx *macaron.Context) {
 	apiSecret := strings.TrimSpace(app.Setting.ApiSecret)
 	json := utils.JsonResponse{}
 	if apiKey == "" || apiSecret == "" {
-		msg := json.CommonFailure("使用API前, 请先配置密钥")
+		msg := json.CommonFailure("使用API前, 服务端请先配置密钥")
 		_, _ = ctx.Write([]byte(msg))
 		return
 	}

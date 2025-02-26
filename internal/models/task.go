@@ -70,6 +70,10 @@ func taskHostTableName() []string {
 	return []string{TablePrefix + "task_host", "th"}
 }
 
+func userTableName() []string {
+	return []string{TablePrefix + "user", "tu"}
+}
+
 // 新增
 func (task *Task) Create() (insertId int, err error) {
 	_, err = Db.Insert(task)
@@ -121,6 +125,20 @@ func (task *Task) ActiveList(page, pageSize int) ([]Task, error) {
 	}
 
 	return task.setHostsForTasks(list)
+}
+
+func (task *Task) ColumnList() (map[int]interface{}, error) {
+	taskList := make([]Task, 0)
+	err := Db.Cols(`id,name`).Find(&taskList)
+	list := make(map[int]interface{}, len(taskList))
+	for i, value := range taskList {
+		row := make(map[string]interface{})
+		row["id"] = value.Id
+		row["name"] = value.Name
+		row["checked"] = false
+		list[i] = row
+	}
+	return list, err
 }
 
 // 获取某个主机下的所有激活任务
@@ -195,12 +213,13 @@ func (task *Task) Detail(id int) (Task, error) {
 	return t, err
 }
 
-func (task *Task) List(params CommonMap) ([]Task, error) {
+func (task *Task) List(params CommonMap, uid int) ([]Task, error) {
 	task.parsePageAndPageSize(params)
 	list := make([]Task, 0)
-	session := Db.Alias("t").Join("LEFT", taskHostTableName(), "t.id = th.task_id").OrderBy("sort ASC,id DESC")
+	session := Db.Alias("t").Join("LEFT", taskHostTableName(), "t.id = th.task_id").OrderBy("sort ASC,id DESC").Join(
+		"LEFT", userTableName(), "(tu.is_admin = 1 ) OR JSON_CONTAINS(tu.task_ids, CAST(t.id AS CHAR))")
 	task.parseWhere(session, params)
-	err := session.GroupBy("t.id").Desc("t.id").Cols("t.*").Limit(task.PageSize, task.pageLimitOffset()).Find(&list)
+	err := session.GroupBy("t.id").Desc("t.id").Cols("t.*").Limit(task.PageSize, task.pageLimitOffset()).Where("tu.id=?", uid).Find(&list)
 
 	if err != nil {
 		return nil, err
@@ -234,12 +253,13 @@ func (task *Task) GetDependencyTaskList(ids string) ([]Task, error) {
 	return task.setHostsForTasks(list)
 }
 
-func (task *Task) Total(params CommonMap) (int64, error) {
-	session := Db.Alias("t").Join("LEFT", taskHostTableName(), "t.id = th.task_id")
+func (task *Task) Total(params CommonMap, uid int) (int64, error) {
+	session := Db.Alias("t").Join("LEFT", taskHostTableName(), "t.id = th.task_id").Join(
+		"LEFT", userTableName(), "(tu.is_admin = 1 ) OR JSON_CONTAINS(tu.task_ids, CAST(t.id AS CHAR))")
 	task.parseWhere(session, params)
 	list := make([]Task, 0)
 
-	err := session.GroupBy("t.id").Find(&list)
+	err := session.GroupBy("t.id").Where("tu.id=?", uid).Find(&list)
 
 	return int64(len(list)), err
 }

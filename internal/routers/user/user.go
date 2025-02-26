@@ -1,7 +1,9 @@
 package user
 
 import (
+	"encoding/json"
 	"errors"
+	"slices"
 	"strings"
 	"time"
 
@@ -25,6 +27,7 @@ type UserForm struct {
 	Email           string `binding:"Required;MaxSize(50)"` // 邮箱
 	IsAdmin         int8   // 是否是管理员 1:管理员 0:普通用户
 	Status          models.Status
+	TaskIds         string
 }
 
 // Index 用户列表页
@@ -69,6 +72,23 @@ func Detail(ctx *macaron.Context) string {
 		return jsonResp.Success(utils.SuccessContent, nil)
 	}
 
+	var nowTaskIds []int
+	_ = json.Unmarshal([]byte(userModel.TaskIds), &nowTaskIds)
+	taskModel := new(models.Task)
+	taskList, _ := taskModel.ColumnList()
+
+	for i := 0; i < len(taskList); i++ {
+		item := taskList[i]
+		nowId := item.(map[string]interface{})["id"]
+		checked := slices.Contains(nowTaskIds, nowId.(int))
+		if checked {
+			item.(map[string]interface{})["checked"] = true
+		}
+	}
+
+	taskListType, _ := json.Marshal(taskList)
+	taskListString := string(taskListType)
+	userModel.TaskIds = taskListString
 	return jsonResp.Success(utils.SuccessContent, userModel)
 }
 
@@ -78,33 +98,33 @@ func Store(ctx *macaron.Context, form UserForm) string {
 	form.Email = strings.TrimSpace(form.Email)
 	form.Password = strings.TrimSpace(form.Password)
 	form.ConfirmPassword = strings.TrimSpace(form.ConfirmPassword)
-	json := utils.JsonResponse{}
+	jsonRes := utils.JsonResponse{}
 	userModel := models.User{}
 	nameExists, err := userModel.UsernameExists(form.Name, form.Id)
 	if err != nil {
-		return json.CommonFailure(utils.FailureContent, err)
+		return jsonRes.CommonFailure(utils.FailureContent, err)
 	}
 	if nameExists > 0 {
-		return json.CommonFailure("用户名已存在")
+		return jsonRes.CommonFailure("用户名已存在")
 	}
 
 	emailExists, err := userModel.EmailExists(form.Email, form.Id)
 	if err != nil {
-		return json.CommonFailure(utils.FailureContent, err)
+		return jsonRes.CommonFailure(utils.FailureContent, err)
 	}
 	if emailExists > 0 {
-		return json.CommonFailure("邮箱已存在")
+		return jsonRes.CommonFailure("邮箱已存在")
 	}
 
 	if form.Id == 0 {
 		if form.Password == "" {
-			return json.CommonFailure("请输入密码")
+			return jsonRes.CommonFailure("请输入密码")
 		}
 		if form.ConfirmPassword == "" {
-			return json.CommonFailure("请再次输入密码")
+			return jsonRes.CommonFailure("请再次输入密码")
 		}
 		if form.Password != form.ConfirmPassword {
-			return json.CommonFailure("两次密码输入不一致")
+			return jsonRes.CommonFailure("两次密码输入不一致")
 		}
 	}
 	userModel.Name = form.Name
@@ -113,10 +133,15 @@ func Store(ctx *macaron.Context, form UserForm) string {
 	userModel.IsAdmin = form.IsAdmin
 	userModel.Status = form.Status
 
+	var taskIdsData []int
+	_ = json.Unmarshal([]byte(form.TaskIds), &taskIdsData)
+	taskIdsString, _ := json.Marshal(taskIdsData)
+	userModel.TaskIds = string(taskIdsString)
+
 	if form.Id == 0 {
 		_, err = userModel.Create()
 		if err != nil {
-			return json.CommonFailure("添加失败", err)
+			return jsonRes.CommonFailure("添加失败", err)
 		}
 	} else {
 		_, err = userModel.Update(form.Id, models.CommonMap{
@@ -124,13 +149,14 @@ func Store(ctx *macaron.Context, form UserForm) string {
 			"email":    form.Email,
 			"status":   form.Status,
 			"is_admin": form.IsAdmin,
+			"task_ids": string(taskIdsString),
 		})
 		if err != nil {
-			return json.CommonFailure("修改失败", err)
+			return jsonRes.CommonFailure("修改失败", err)
 		}
 	}
 
-	return json.Success("保存成功", nil)
+	return jsonRes.Success("保存成功", nil)
 }
 
 // 删除用户

@@ -1,6 +1,8 @@
 package task
 
 import (
+	"encoding/json"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -54,11 +56,11 @@ func (f TaskForm) Error(ctx *macaron.Context, errs binding.Errors) {
 func Index(ctx *macaron.Context) string {
 	taskModel := new(models.Task)
 	queryParams := parseQueryParams(ctx)
-	total, err := taskModel.Total(queryParams)
+	total, err := taskModel.Total(queryParams, ctx.Data["uid"].(int))
 	if err != nil {
 		logger.Error(err)
 	}
-	tasks, err := taskModel.List(queryParams)
+	tasks, err := taskModel.List(queryParams, ctx.Data["uid"].(int))
 	if err != nil {
 		logger.Error(err)
 	}
@@ -234,19 +236,28 @@ func Disable(ctx *macaron.Context) string {
 // 手动运行任务
 func Run(ctx *macaron.Context) string {
 	id := ctx.ParamsInt(":id")
-	json := utils.JsonResponse{}
+	jsonRes := utils.JsonResponse{}
 	taskModel := new(models.Task)
 	task, err := taskModel.Detail(id)
 	uidInterface, _ := ctx.Data["uid"]
 	uid := uidInterface.(int)
 	if err != nil || task.Id <= 0 {
-		return json.CommonFailure("获取任务详情失败", err)
+		return jsonRes.CommonFailure("获取任务详情失败", err)
+	}
+
+	userModel := new(models.User)
+	_ = userModel.Find(uid)
+	var nowTaskIds []int
+	_ = json.Unmarshal([]byte(userModel.TaskIds), &nowTaskIds)
+	checked := slices.Contains(nowTaskIds, id)
+	if !checked {
+		return jsonRes.CommonFailure("您没有权限执行此任务")
 	}
 
 	task.Spec = "手动运行"
 	service.ServiceTask.Run(task, uid)
 
-	return json.Success("任务已开始运行, 请到任务日志中查看结果", nil)
+	return jsonRes.Success("任务已开始运行, 请到任务日志中查看结果", nil)
 }
 
 // 改变任务状态

@@ -19,6 +19,7 @@ type User struct {
 	Updated   time.Time `json:"updated" xorm:"datetime updated"`
 	IsAdmin   int8      `json:"is_admin" xorm:"tinyint notnull default 0"` // 是否是管理员 1:管理员 0:普通用户
 	Status    Status    `json:"status" xorm:"tinyint notnull default 1"`   // 1: 正常 0:禁用
+	TaskIds   string    `json:"task_ids" xorm:"json DEFAULT NULL"`
 	BaseModel `json:"-" xorm:"-"`
 }
 

@@ -2,6 +2,7 @@ package base
 
 import (
 	"github.com/ouqiang/gocron/internal/models"
+	"github.com/ouqiang/gocron/internal/modules/utils"
 	"gopkg.in/macaron.v1"
 )
 
@@ -18,4 +19,11 @@ func ParsePageAndPageSize(ctx *macaron.Context, params models.CommonMap) {
 
 	params["Page"] = page
 	params["PageSize"] = pageSize
+}
+
+func Ping(ctx *macaron.Context) string {
+	json := utils.JsonResponse{}
+	return json.Success(utils.SuccessContent, map[string]interface{}{
+		"data": "pong",
+	})
 }

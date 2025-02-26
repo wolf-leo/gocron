@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <el-main>
-      <el-form ref="form" :model="form" :rules="formRules" label-width="100px" style="width: 500px;">
+      <el-form ref="form" :model="form" :rules="formRules" label-width="100px" style="max-width: 1200px;">
         <el-form-item>
           <el-input v-model="form.id" type="hidden"></el-input>
         </el-form-item>
@@ -31,6 +31,12 @@
             <el-radio :label="0">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="授权任务" v-if="tasks[0]">
+          <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选 (管理员无视授权)</el-checkbox>
+          <el-checkbox-group v-model="checkedtasks" @change="handleCheckedtasksChange" size="small">
+            <el-checkbox border v-for="taskIds in tasks" :label="taskIds.id" :key="taskIds.id" :checked="taskIds.checked">{{ taskIds.name }} ({{ taskIds.id }})</el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submit()">保存</el-button>
           <el-button @click="cancel">取消</el-button>
@@ -42,10 +48,15 @@
 
 <script>
 import userService from '../../api/user'
+
 export default {
   name: 'user-edit',
   data: function () {
     return {
+      checkAll: false,
+      checkedtasks: [],
+      tasks: [],
+      isIndeterminate: true,
       form: {
         id: '',
         name: '',
@@ -71,7 +82,7 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     const id = this.$route.params.id
     if (!id) {
       return
@@ -81,15 +92,41 @@ export default {
         this.$message.error('数据不存在')
         return
       }
+      let taskIdsData = data.task_ids === '' ? [] : JSON.parse(data.task_ids)
+      let taskIdsLen = Object.keys(taskIdsData).length
+      taskIdsData = JSON.parse(JSON.stringify(taskIdsData))
+      let checkedLen = 0
+      for (const taskIdsLenKey in taskIdsData) {
+        if (taskIdsData[taskIdsLenKey]['checked']) checkedLen++
+      }
+      this.checkAll = checkedLen === taskIdsLen;
+      this.isIndeterminate = checkedLen > 0 && checkedLen < taskIdsLen;
       this.form.id = data.id
       this.form.name = data.name
       this.form.email = data.email
       this.form.is_admin = data.is_admin
       this.form.status = data.status
+      this.tasks = taskIdsData
     })
   },
   methods: {
-    submit () {
+    handleCheckAllChange(val) {
+      let ids = [];
+      let tasks = JSON.parse(JSON.stringify(this.tasks))
+      for (let i = 0; i < Object.keys(tasks).length; i++) {
+        ids.push(tasks[i]['id']);
+      }
+      this.checkedtasks = val ? ids : [];
+      this.isIndeterminate = false;
+    },
+    handleCheckedtasksChange(value) {
+      let tasks = JSON.parse(JSON.stringify(this.tasks))
+      let checkedCount = value.length;
+      let taskCount = Object.keys(tasks).length;
+      this.checkAll = checkedCount === taskCount;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < taskCount;
+    },
+    submit() {
       this.$refs['form'].validate((valid) => {
         if (!valid) {
           return false
@@ -97,7 +134,9 @@ export default {
         this.save()
       })
     },
-    save () {
+    save() {
+      let checkedTaskIds = JSON.parse(JSON.stringify(this.checkedtasks))
+      this.form.task_ids = JSON.stringify(checkedTaskIds)
       userService.update(this.form, (e, code, msg) => {
         if (code !== 0) {
           this.$message.error(msg)
@@ -112,7 +151,7 @@ export default {
         })
       })
     },
-    cancel () {
+    cancel() {
       this.$router.push('/user')
     }
   }
